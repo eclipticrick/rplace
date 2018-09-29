@@ -29,7 +29,6 @@ _getPixelKey = (x, y) =>
 
 module.exports = {
     setPixel: (x, y, color) => _getPixelKey(x, y)
-        .then(x => { console.log(x); return x })
         .then(key => key ?
             (pixelsRef.doc(key).set({ x, y, color }).then(() => 'replaced')) :
             (pixelsRef.add({ x, y, color })).then(() => 'added')),

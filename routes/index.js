@@ -13,19 +13,22 @@ router.get('/message', (req, res) => {
 });
 
 router.post('/pixel', (req, res) => {
+    const x = req.body.x;
+    const y = req.body.y;
+    const color = req.body.color.toUpperCase();
 
-    if (!check.isValidCoordinate(req.body.x, req.body.y))
+    if (!check.isValidCoordinate(x, y))
         throw new Error('Invalid X,Y position!');
 
-    if (!check.isValidColor(req.body.color))
+    if (!check.isValidColorCode(color))
         throw new Error('Invalid color!');
 
     if (!check.canChangePixel(req.body.key))
         throw new Error(functions.getMessage(req.body.key));
 
-    firebase.setPixel(req.body.x, req.body.y, req.body.color)
+    firebase.setPixel(x, y, color)
         .then(action => res.status(201).json({
-            message: `Pixel set successfully at position (x=${ req.body.x }, y=${ req.body.y })!`,
+            message: `Pixel set successfully at position (x=${ x }, y=${ y })!`,
             action: action
         }));
 });
