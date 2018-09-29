@@ -9,26 +9,30 @@ router.get('/', (req, res) => {
 });
 
 router.get('/message', (req, res) => {
-    functions.getMessage().then(message => res.status(200).send(message));
+    functions.getMessage().then(message => res.status(200).json({ message: message }));
 });
 
 router.post('/pixel', (req, res) => {
-    console.log('x', req.body.x);
-    console.log('y', req.body.y);
-    console.log('color', req.body.color);
-    console.log('key', req.body.key);
-    const x = Math.floor(Math.random() * 10000);
-    const y = Math.floor(Math.random() * 10000);
-    const color = '#' + Math.floor(Math.random() * 9).toString() + Math.floor(Math.random() * 9).toString() + Math.floor(Math.random() * 9).toString() + Math.floor(Math.random() * 9).toString() + Math.floor(Math.random() * 9).toString() + Math.floor(Math.random() * 9).toString();
 
-    if (!check.isValidCoordinate(req.body.color)) throw new Error('Invalid X,Y position!');
-    if (!check.isValidColor(req.body.color)) throw new Error('Invalid color!');
-    firebase.addPixel(x, y, color).then(() => res.status(201).send('success'));
+    if (!check.isValidCoordinate(req.body.x, req.body.y))
+        throw new Error('Invalid X,Y position!');
+
+    if (!check.isValidColor(req.body.color))
+        throw new Error('Invalid color!');
+
+    if (!check.canChangePixel(req.body.key))
+        throw new Error(functions.getMessage(req.body.key));
+
+    firebase.setPixel(req.body.x, req.body.y, req.body.color)
+        .then(action => res.status(201).json({
+            message: `Pixel set successfully at position (x=${ req.body.x }, y=${ req.body.y })!`,
+            action: action
+        }));
 });
 
 router.get('/pixels', (req, res) => {
     firebase.getPixels()
-        .then(data => res.status(200).send(JSON.stringify(data)));
+        .then(data => res.status(200).json(JSON.stringify(data)));
 });
 
 module.exports = router;
