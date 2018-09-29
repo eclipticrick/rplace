@@ -1,0 +1,8 @@
+# ADD THIS YOURSELF (in the root folder):
+firebase.config.js
+
+
+
+.idea
+*.iml
+node_modules

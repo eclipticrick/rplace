@@ -1,0 +1,23 @@
+{
+  "name": "rplace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eclipticrick/rplace.git"
+  },
+  "author": "Wesley Veenendaal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eclipticrick/rplace/issues"
+  },
+  "homepage": "https://github.com/eclipticrick/rplace#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "http-errors": "^1.7.1"
+  }
+}
