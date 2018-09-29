@@ -1,5 +1,6 @@
 
 // TODO: set LastActive Property on session-file so the session can be deleted after not being used for a while
+// TODO: delete all session-files on restart
 
 const express = require('express');
 const router = express.Router();
@@ -29,8 +30,8 @@ router.get('/register', (req, res) => {
 
 router.post('/pixel', (req, res) => {
     const key = req.query.key;
-    const x = req.body.x;
-    const y = req.body.y;
+    let x = req.body.x;
+    let y = req.body.y;
     let color = req.body.color;
 
     if (check.isNullOrUndefined(key))
@@ -44,22 +45,30 @@ router.post('/pixel', (req, res) => {
     if (!check.isValidCoordinate(x, y))
         throw new Error('Invalid X,Y position!');
 
+    x = Number(x);
+    y = Number(y);
+
     if (!check.isValidColorCode(color))
         throw new Error('Invalid color!');
 
-    if (!check.canChangePixel(key))
-        throw new Error(`You have to wait ${functions.secondsBeforeNextPixelPlacement()} more seconds to set a pixel.`);
-
-    functions.setPixel(x, y, color, key)
-        .then(action => res.status(201).json({
-            message: `Pixel set successfully at position (x=${ x }, y=${ y })!`,
-            action: action
-        }));
+    functions.secondsBeforeNextPixelPlacement(key)
+        .then(seconds => {
+            if (seconds !== 0) {
+                return res.status(500).json({ error: `You have to wait ${ seconds } more seconds to set a pixel.` });
+            }
+            else {
+                functions.setPixel(x, y, color, key)
+                    .then(action => res.status(201).json({
+                        message: `Pixel set successfully at position (x=${ x }, y=${ y })!`,
+                        action: action
+                    }));
+            }
+        });
 });
 
 router.get('/pixels', (req, res) => {
     functions.getPixels()
-        .then(data => res.status(200).json(JSON.stringify(data)));
+        .then(data => res.status(200).json(data));
 });
 
 module.exports = router;

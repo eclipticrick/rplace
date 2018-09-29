@@ -3,7 +3,14 @@ const config = require('../config');
 module.exports = {
     isNullOrUndefined: value => value === null || typeof value === 'undefined',
     isValidCoordinate: (x, y) => {
-        return !(x < 0 || y < 0 || x > config.maximumPosition.x || y > config.maximumPosition.y);
+        return !(
+            x < 0 ||
+            y < 0 ||
+            x > config.maximumPosition.x ||
+            y > config.maximumPosition.y ||
+            isNaN(Number(x)) ||
+            isNaN(Number(y))
+        );
     },
     isValidColorCode: hex => {
         let validColor = false;
@@ -12,10 +19,4 @@ module.exports = {
         });
         return validColor;
     },
-
-    // TODO
-    userIsAlreadyRegistered: userKey => true,
-
-    // TODO: make sure each user can only change pixels every 10 minutes
-    canChangePixel: userKey => true
 };

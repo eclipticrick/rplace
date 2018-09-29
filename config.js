@@ -1,7 +1,7 @@
 module.exports = {
     firebaseCredentials: require('./firebase.config'),
     port: 5002,
-    timeBetweenPixelPlacementInSeconds: 60,
+    timeBetweenPixelPlacementInSeconds: 150,
     maximumPosition: {
         x: 500,
         y: 500

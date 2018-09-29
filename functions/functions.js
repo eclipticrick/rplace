@@ -51,29 +51,49 @@ _createFile = userKey => {
         JSON.stringify({ key: userKey, lastPixelPlacementTimestamp: Date.now() }),
         err => err ? reject(err) : resolve('Registered!')))
 };
+_addNewLastPixelPlacementTimestamp = userKey => {
+    // return new Promise((resolve, reject) => fs.writeFile(
+    //     _getFileLocation(userKey),
+    //     JSON.stringify({ key: userKey, lastPixelPlacementTimestamp: Date.now() }),
+    //     err => err ? reject(err) : resolve('Registered!')))
+};
+
+_secondsBeforeNextPixelPlacement = jsonContentOfFile => {
+    let seconds = 0;
+    const secondsElapsedSinceLastPlacement = (
+        new Date().getTime() - new Date(jsonContentOfFile.lastPixelPlacementTimestamp).getTime()
+    ) / 1000;
+    if (config.timeBetweenPixelPlacementInSeconds > secondsElapsedSinceLastPlacement)
+        seconds = Math.abs(config.timeBetweenPixelPlacementInSeconds - secondsElapsedSinceLastPlacement);
+    return Math.floor(seconds)
+};
 
 module.exports = {
     setPixel: (x, y, color) => _getPixelKey(x, y)
-        .then(key => key ?
-            (pixelsRef.doc(key).set({ x, y, color }).then(() => 'replaced')) :
-            (pixelsRef.add({ x, y, color })).then(() => 'added')),
+        .then(key => {
+            let action;
+            if (key) {
+                pixelsRef
+                    .doc(key)
+                    .set({ x, y, color });
+                action = 'replaced';
+            }
+            else {
+                pixelsRef
+                    .add({ x, y, color });
+                action = 'added';
+            }
+            _addNewLastPixelPlacementTimestamp(key);
+            return action
+            }
+        ),
+
     getPixels: () => pixelsRef.get().then(snapshot => _getSnapshotToArray(snapshot)),
 
     secondsBeforeNextPixelPlacement: userKey => {
         return _fileExists(userKey)
             .then(exists => exists ? _openFile(userKey) : Promise.reject('Key not found'))
-            .then(json => {
-                let seconds = 0;
-
-                const secondsElapsedSinceLastPlacement = (
-                    new Date().getTime() - new Date(json.lastPixelPlacementTimestamp).getTime()
-                ) / 1000;
-
-                if (config.timeBetweenPixelPlacementInSeconds > secondsElapsedSinceLastPlacement)
-                    seconds = Math.abs(config.timeBetweenPixelPlacementInSeconds - secondsElapsedSinceLastPlacement);
-
-                return Math.floor(seconds)
-            })
+            .then(json => _secondsBeforeNextPixelPlacement(json))
     },
 
     registerKey: userKey => {

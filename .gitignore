@@ -3,6 +3,7 @@ firebase.config.js
 
 
 
+keys
 .idea
 *.iml
 node_modules
