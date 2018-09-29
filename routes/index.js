@@ -1,35 +1,40 @@
+
+// TODO: set LastActive Property on session-file so the session can be deleted after not being used for a while
+
 const express = require('express');
 const router = express.Router();
 const functions = require('../functions/functions');
 const check = require('../functions/check');
+const uuid = require('uuid/v1');
 
-router.get('/', (req, res) => {
-    res.status(200).send('Hi! How are you?');
-});
+router.get('/', (req, res) => res.status(200).send('Hi! How are you?'));
 
 router.get('/time', (req, res) => {
-    functions.secondsBeforeNextPixelPlacement()
-        .then(seconds => res.status(200).json({ seconds }));
-});
-
-router.post('/register', (req, res) => {
-    const key = req.body.key;
+    const key = req.query.key;
 
     if (check.isNullOrUndefined(key))
-        res.status(403).json({ error: 'Un-authorised' });
+        return res.status(403).json({ error: 'Un-authorised' });
 
+    functions.secondsBeforeNextPixelPlacement(key)
+        .then(seconds => res.status(200).json({ seconds }))
+        .catch(err => res.status(500).json({ error: err }));
+});
+
+router.get('/register', (req, res) => {
+    const key = uuid();
     functions.registerKey(key)
-        .then(message => res.status(200).json({ message }));
+        .then(message => res.status(200).json({ message, key }))
+        .catch(err => res.status(500).json({ error: err }));
 });
 
 router.post('/pixel', (req, res) => {
+    const key = req.query.key;
     const x = req.body.x;
     const y = req.body.y;
-    const key = req.body.key;
     let color = req.body.color;
 
     if (check.isNullOrUndefined(key))
-        res.status(403).json({ error: 'Un-authorised' });
+        return res.status(403).json({ error: 'Un-authorised' });
 
     if (check.isNullOrUndefined(x) || check.isNullOrUndefined(y) || check.isNullOrUndefined(color))
         throw new Error('Make sure you provided an x, y and color value!');
