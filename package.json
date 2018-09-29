@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/eclipticrick/rplace#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
+    "firebase": "^5.5.2-0",
     "http-errors": "^1.7.1"
   }
 }
