@@ -1,9 +1,9 @@
 module.exports = {
     firebaseCredentials: require('./firebase.config'),
-    port: 5003,
+    port: 5002,
     maximumPosition: {
-        x: 2000,
-        y: 2000
+        x: 500,
+        y: 500
     },
     validColors: [
         '#000000',
