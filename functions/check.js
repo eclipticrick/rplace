@@ -13,6 +13,9 @@ module.exports = {
         return validColor;
     },
 
+    // TODO
+    userIsAlreadyRegistered: userKey => true,
+
     // TODO: make sure each user can only change pixels every 10 minutes
     canChangePixel: userKey => true
 };

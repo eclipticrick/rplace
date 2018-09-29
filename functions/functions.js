@@ -33,5 +33,10 @@ module.exports = {
             (pixelsRef.doc(key).set({ x, y, color }).then(() => 'replaced')) :
             (pixelsRef.add({ x, y, color })).then(() => 'added')),
     getPixels: () => pixelsRef.get().then(snapshot => _getSnapshotToArray(snapshot)),
-    secondsBeforeNextPixelPlacement: userKey => Promise.resolve(0)
+
+    // TODO
+    secondsBeforeNextPixelPlacement: userKey => Promise.resolve(0),
+
+    // TODO
+    registerKey: userKey => Promise.resolve('registered')
 };

@@ -8,7 +8,18 @@ router.get('/', (req, res) => {
 });
 
 router.get('/time', (req, res) => {
-    functions.secondsBeforeNextPixelPlacement().then(seconds => res.status(200).json({ seconds }));
+    functions.secondsBeforeNextPixelPlacement()
+        .then(seconds => res.status(200).json({ seconds }));
+});
+
+router.post('/register', (req, res) => {
+    const key = req.body.key;
+
+    if (check.isNullOrUndefined(key))
+        res.status(403).json({ error: 'Un-authorised' });
+
+    functions.registerKey(key)
+        .then(message => res.status(200).json({ message }));
 });
 
 router.post('/pixel', (req, res) => {
