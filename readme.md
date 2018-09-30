@@ -67,7 +67,7 @@ register for a key to place pixels with, after registering the first pixel can b
     **Content:** 
     ```json
     {
-        "key": [string],
+        "key": "abc",
         "": ""
     }
     ```
@@ -100,9 +100,10 @@ set a pixel
         "y": 1,
         "color": "#FFFFFF"
       },
-      { ... },
-      { ... },
-      { ... }
+      { },
+      { },
+      { },
+      { }
     ]
     ```
 
