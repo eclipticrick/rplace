@@ -12,23 +12,16 @@ const fs = require('fs');
 
 _getSnapshotToArray = snapshot => {
     const arr = [];
-    snapshot.forEach(doc => {
-        const docWithKey = doc.data();
-        docWithKey.key = doc.id;
-        arr.push(docWithKey)
-    });
+    snapshot.forEach(doc => arr.push(doc.data()));
     return arr;
 };
 
-_getPixelKey = (x, y) =>
-    db.collection('pixels')
-        .where('x', '==', x)
-        .where('y', '==', y)
-        .get()
+_getPixelFirebaseId = (x, y) =>
+    pixelsRef.where('x', '==', x).where('y', '==', y).get()
         .then(snapshot => {
-            let key = null;
-            snapshot.forEach(doc => key = doc.id);
-            return key;
+            let id = null;
+            snapshot.forEach(doc => id = doc.id);
+            return id;
         });
 
 
@@ -46,16 +39,22 @@ _openFile = userKey => new Promise((resolve, reject) => {
 });
 
 _createFile = userKey => {
+    return _writeFile({ key: userKey, lastPixelPlacementTimestamp: Date.now() });
+};
+
+_writeFile = object => {
     return new Promise((resolve, reject) => fs.writeFile(
-        _getFileLocation(userKey),
-        JSON.stringify({ key: userKey, lastPixelPlacementTimestamp: Date.now() }),
+        _getFileLocation(object.key),
+        JSON.stringify(object),
         err => err ? reject(err) : resolve('Registered!')))
 };
+
 _addNewLastPixelPlacementTimestamp = userKey => {
-    // return new Promise((resolve, reject) => fs.writeFile(
-    //     _getFileLocation(userKey),
-    //     JSON.stringify({ key: userKey, lastPixelPlacementTimestamp: Date.now() }),
-    //     err => err ? reject(err) : resolve('Registered!')))
+    _openFile(userKey)
+        .then(json => {
+            json.lastPixelPlacementTimestamp = Date.now();
+            return _writeFile(json)
+        })
 };
 
 _secondsBeforeNextPixelPlacement = jsonContentOfFile => {
@@ -69,24 +68,23 @@ _secondsBeforeNextPixelPlacement = jsonContentOfFile => {
 };
 
 module.exports = {
-    setPixel: (x, y, color) => _getPixelKey(x, y)
-        .then(key => {
+    setPixel: (x, y, color, userKey) => _getPixelFirebaseId(x, y)
+        .then(id => {
             let action;
-            if (key) {
+            if (id) {
                 pixelsRef
-                    .doc(key)
-                    .set({ x, y, color });
+                    .doc(id)
+                    .set({ x, y, color, userKey });
                 action = 'replaced';
             }
             else {
                 pixelsRef
-                    .add({ x, y, color });
+                    .add({ x, y, color, userKey });
                 action = 'added';
             }
-            _addNewLastPixelPlacementTimestamp(key);
+            _addNewLastPixelPlacementTimestamp(userKey);
             return action
-            }
-        ),
+        }),
 
     getPixels: () => pixelsRef.get().then(snapshot => _getSnapshotToArray(snapshot)),
 
