@@ -72,18 +72,14 @@ register for a key to place pixels with, after registering the first pixel can b
     }
     ```
 
-
-
-
-
-
+##
 
 #### **<code>GET</code> [localhost:5002/pixels](http://localhost:5002/pixels)**
 
 set a pixel
 
 * **URL**
-  /users/:id
+  /pixels
 
 * **Method:**
   `GET`
@@ -116,12 +112,7 @@ set a pixel
     
   ```
 
-
-
-
-
-
-
+##
 
 #### **<code>GET</code> [localhost:5002/time](http://localhost:5002/time)?key=[string]**
 
@@ -137,12 +128,7 @@ get time until next possible pixel placement
    (Required)
    `key=[string]`
 
-
-
-
-
-
-
+##
 
 #### **<code>POST</code> [localhost:5002/pixel](http://localhost:5002/pixel)?key=[string]**
 
