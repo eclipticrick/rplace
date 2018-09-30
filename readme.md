@@ -1,4 +1,4 @@
-# Selficient React dashboard
+# /r/place NodeJS backend
 
 This is a re-make of the backend for /r/place. If you want to make your own front-end for this you can use this Node API. It has 4 endpoints as described below.
 
