@@ -59,9 +59,8 @@ router.post('/pixel', (req, res) => {
             }
             else {
                 functions.setPixel(x, y, color, key)
-                    .then(action => res.status(201).json({
-                        message: `Pixel set successfully at position (x=${ x }, y=${ y })!`,
-                        action: action
+                    .then(() => res.status(201).json({
+                        message: `Pixel set successfully at position (x=${ x }, y=${ y })!`
                     })).catch(err => res.status(500).json({ error: err }));
             }
         }).catch(err => res.status(500).json({ error: err }));
