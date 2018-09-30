@@ -1,6 +1,7 @@
 
 // TODO: set LastActive Property on session-file so the session can be deleted after not being used for a while
 // TODO: delete all session-files on restart
+// TODO: prevent auto-restart on file-change in the keys folder
 
 const express = require('express');
 const router = express.Router();

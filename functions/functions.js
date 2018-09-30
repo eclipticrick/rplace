@@ -72,17 +72,15 @@ module.exports = {
         .then(id => {
             let action;
             if (id) {
-                pixelsRef
-                    .doc(id)
-                    .set({ x, y, color, userKey });
+                pixelsRef.doc(id).set({ x, y, color, userKey })
+                    .then(() => _addNewLastPixelPlacementTimestamp(userKey));
                 action = 'replaced';
             }
             else {
-                pixelsRef
-                    .add({ x, y, color, userKey });
+                pixelsRef.add({ x, y, color, userKey })
+                    .then(() => _addNewLastPixelPlacementTimestamp(userKey));
                 action = 'added';
             }
-            _addNewLastPixelPlacementTimestamp(userKey);
             return action
         }),
 
