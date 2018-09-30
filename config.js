@@ -3,8 +3,8 @@ module.exports = {
     port: 5002,
     timeBetweenPixelPlacementInSeconds: 150,
     maximumPosition: {
-        x: 500,
-        y: 500
+        x: 50,
+        y: 50
     },
     validColors: [
         '#000000',

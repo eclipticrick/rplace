@@ -1,7 +1,9 @@
 
-// TODO: set LastActive Property on session-file so the session can be deleted after not being used for a while
-// TODO: delete all session-files on restart
-// TODO: prevent auto-restart on file-change in the keys folder
+// (1) TODO: add last-updated property so only a few have to be retrieved on second-load.
+// (2) TODO: set LastActive Property on session-file so the session can be deleted after not being used for a while
+// (3) TODO: delete all session-files on restart
+// (4) TODO: prevent auto-restart on file-change in the keys folder
+
 
 const express = require('express');
 const router = express.Router();
@@ -15,7 +17,7 @@ router.get('/time', (req, res) => {
     const key = req.query.key;
 
     if (check.isNullOrUndefined(key))
-        return res.status(403).json({ error: 'Un-authorised' });
+        return res.status(401).json({ error: 'Unauthorized' });
 
     functions.secondsBeforeNextPixelPlacement(key)
         .then(seconds => res.status(200).json({ seconds }))
@@ -36,7 +38,7 @@ router.post('/pixel', (req, res) => {
     let color = req.body.color;
 
     if (check.isNullOrUndefined(key))
-        return res.status(403).json({ error: 'Un-authorised' });
+        return res.status(401).json({ error: 'Unauthorized' });
 
     if (check.isNullOrUndefined(x) || check.isNullOrUndefined(y) || check.isNullOrUndefined(color))
         throw new Error('Make sure you provided an x, y and color value!');
